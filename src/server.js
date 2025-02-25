@@ -2,7 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import pino from 'pino-http';
 
-import { getContactsController } from './controllers/contactsController.js';
+import {
+  getContactsController,
+  getContactByIdController,
+} from './controllers/contactsController.js';
 
 export const setupServer = () => {
   const app = express();
@@ -19,17 +22,16 @@ export const setupServer = () => {
     }),
   );
 
-  // Правильний роут для отримання контактів
   app.get('/contacts', getContactsController);
 
-  // Обробка неіснуючих маршрутів
+  app.get('/contacts/:contactId', getContactByIdController);
+
   app.use('*', (req, res) => {
     res.status(404).json({
       message: 'Not found',
     });
   });
 
-  // Глобальний обробник помилок
   app.use((err, req, res) => {
     res.status(500).json({
       message: 'Something went wrong',
